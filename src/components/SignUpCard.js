@@ -4,22 +4,21 @@ import * as React from "react";
 import {useState} from "react";
 import {initializeApp} from "firebase/app";
 import {firebaseConfig} from "../config/firebase";
-import {getAuth, signInWithEmailAndPassword} from "firebase/auth";
+import {createUserWithEmailAndPassword, getAuth} from "firebase/auth";
 import {useNavigation} from "@react-navigation/native";
 
-const LoginCard = () => {
+const SignUpCard = () => {
 
     const navigation = useNavigation();
 
-    const goToHome = () => {
-        navigation.navigate('Home');
-    }
-    const goToSignUp = () => {
-        navigation.navigate('signUp');
+    const goToLogin = () => {
+        navigation.navigate('logIn');
     }
 
     //Declaracion de variables
     const [email, setEmail] = useState("");
+    const [name, setName] = useState("");
+    const [lastName, setLastName] = useState("");
     const [password, setPassword] = useState("");
 
     //Inicializamos firebase y le pasamos las credenciales de nuestra base.
@@ -27,19 +26,20 @@ const LoginCard = () => {
     //Obtenemos los metodos de autenticacion asociados a nuestra base.
     const auth = getAuth(app);
 
-
     //Funcion para crear una cuenta.
-    const handleLogin = () => {
+    const handleSignIn = () => {
         //Creamos una cuenta por medio del email y password del usuario.
-        signInWithEmailAndPassword(auth, email, password)
+        createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential)=>{
-                Alert.alert('Éxito', 'Sesión iniciada exitosamente');
+                Alert.alert('Éxito', 'Cuenta creada exitosamente');
+                goToLogin();
                 const user = userCredential.user;
                 console.log(user)
                 //Se limpia la informacion de los input
                 setEmail("")
+                setName("")
+                setLastName("")
                 setPassword("")
-                goToHome();
             })
             .catch(error => {
                 console.log(error)
@@ -49,6 +49,24 @@ const LoginCard = () => {
 
     return(
         <View style={styles.box}>
+            <TextInput
+                left={<TextInput.Icon icon="account"/>}
+                mode='outlined'
+                label='Nombre'
+                style={styles.input}
+                onChangeText={setName}
+                activeOutlineColor={'#199797'}
+                outlineColor={'#cbf6de'}
+            />
+            <TextInput
+                left={<TextInput.Icon icon="account-edit"/>}
+                label='Apellido'
+                mode="outlined"
+                style={styles.input}
+                onChangeText={setLastName}
+                activeOutlineColor={'#199797'}
+                outlineColor={'#cbf6de'}
+            />
             <TextInput
                 left={<TextInput.Icon icon="email"/>}
                 mode="outlined"
@@ -68,12 +86,12 @@ const LoginCard = () => {
                 activeOutlineColor={'#199797'}
                 outlineColor={'#cbf6de'}
             />
-            <Button style={styles.button} mode="contained" onPress={()=>{handleLogin()}}>
-                Iniciar sesión
+            <Button style={styles.button} mode="contained" onPress={()=>{handleSignIn()}}>
+                Registrar sesión
             </Button>
             <View style={styles.row}>
-                <Text>¿Aún no tienes una cuenta?</Text>
-                <Text onPress={()=>{goToSignUp()}} style={styles.logIn}>Registrarme</Text>
+                <Text>¿Ya tienes una cuenta?</Text>
+                <Text onPress={()=>{goToLogin()}} style={styles.logIn}>Iniciar sesión</Text>
             </View>
         </View>
     )
@@ -105,4 +123,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default LoginCard;
+export default SignUpCard;
