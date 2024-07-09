@@ -1,11 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, FlatList, Alert} from 'react-native';
 import { database } from '../config/firebase'; // Importa la configuración de la base de datos de Firebase
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore'; // Importa funciones de Firestore para consultas en tiempo real
-import CardProductos from '../components/CardProductos'; // Importa el componente de tarjeta de producto
+import CardProductos from '../components/CardProductos';
+import {initializeApp} from "firebase/app";
+import {getAuth, signOut} from "firebase/auth";
+import {useNavigation} from "@react-navigation/native"; // Importa el componente de tarjeta de producto
+import {firebaseConfig} from "../config/firebase";
+import {Button} from "react-native-paper";
 
 // Definición del componente principal Home
 const Home = ({ navigation }) => {
+
+    // Inicializamos firebase y le pasamos las credenciales de nuestra base.
+    const app = initializeApp(firebaseConfig);
+    // Obtenemos los métodos de autenticación asociados a nuestra base.
+    const auth = getAuth(app);
+
+    const handleSignOut = () => {
+        signOut(auth)
+            .then(() => {
+                Alert.alert('Éxito', 'Sesión cerrada exitosamente');
+                navigation.navigate('logIn'); // Navega a la pantalla de inicio de sesión
+            })
+            .catch((error) => {
+                console.error(error);
+                Alert.alert('Error', 'Hubo un problema al cerrar sesión');
+            });
+    };
+
     // Definición del estado local para almacenar los productos
     const [productos, setProductos] = useState([]);
 
@@ -68,6 +91,11 @@ const Home = ({ navigation }) => {
                 style={styles.Button}
                 onPress={goToAdd}>
                 <Text style={styles.ButtonText}>Agregar Producto</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.Button}
+                onPress={handleSignOut}>
+                <Text style={styles.ButtonText}>Cerrar sesión</Text>
             </TouchableOpacity>
         </View>
     );
