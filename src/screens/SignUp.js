@@ -1,24 +1,8 @@
 import {Text, View, StyleSheet, TextInput, Alert} from "react-native";
 import * as React from 'react';
-import { Button } from 'react-native-paper';
-import {useState} from "react";
 import SignUpCard from "../components/SignUpCard";
-import {useNavigation} from "@react-navigation/native";
 
 const SignUp = () => {
-
-     const handleLogIn = () => {
-         signInWithEmailAndPassword(auth, email, password)
-             .then((userCredential)=>{
-                 console.log('SignIn')
-                 const user = userCredential.user;
-                 console.log(user);
-             })
-             .catch(error => {
-                 console.log(error)
-                 Alert.alert(error.message);
-             })
-     }
 
     return(
       <View style={styles.container}>
